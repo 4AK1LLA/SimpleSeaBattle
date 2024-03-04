@@ -3,6 +3,7 @@ package com.rustret;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Scanner;
 
 public class UI {
@@ -12,6 +13,7 @@ public class UI {
         startMenu();
         createPlayersMenu();
         playerBoards.keySet().forEach(this::locateShipsMenu);
+        String first = timerMenu();
     }
 
     void startMenu() {
@@ -89,6 +91,26 @@ public class UI {
             clearScreen();
             locateShipsMenu(player);
         }
+    }
+
+    String timerMenu() {
+        String[] players = playerBoards.keySet().toArray(new String[0]);
+        int random = new Random().nextInt(players.length);
+        String whoIsFirst = players[random];
+
+        for (int i = 5; i >= 1; i--) {
+            drawTitle();
+            System.out.println("Початок гри через " + i + "...");
+            if (i <= 3) {
+                System.out.println("Першим буде ходити " + bold(whoIsFirst));
+            }
+            try {
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {}
+            clearScreen();
+        }
+
+        return whoIsFirst;
     }
 
     int getY(String input) {
