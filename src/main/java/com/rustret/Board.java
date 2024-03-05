@@ -3,6 +3,9 @@ package com.rustret;
 public class Board {
     public static final int SIZE = 10;
     public static final int SHIPS_COUNT = 20;
+    public static final int SHOT_ALREADY_EXIST = 0;
+    public static final int SHOT_HIT = 1;
+    public static final int SHOT_MISS = 2;
     private static final char CHAR_EMPTY = '·';
     private static final char CHAR_MISS = 'o';
     private static final char CHAR_HIT = '*';
@@ -10,6 +13,7 @@ public class Board {
     public boolean[][] ships = new boolean[SIZE][SIZE];
     public boolean[][] hits = new boolean[SIZE][SIZE];
     public int locatedShips = 0;
+    public boolean lastShotMissed;
 
     public void draw() {
         System.out.println("   Р Е С П У Б Л І К А");
@@ -17,6 +21,23 @@ public class Board {
             System.out.printf("%-2d", i);
             for (int j = 1; j <= SIZE; j++) {
                 System.out.printf("%2c", ships[i - 1][j - 1] ? CHAR_SHIP : CHAR_EMPTY);
+            }
+            System.out.println();
+        }
+    }
+
+    public void drawForEnemy() {
+        System.out.println("   Р Е С П У Б Л І К А");
+        for (int i = 1; i <= SIZE; i++) {
+            System.out.printf("%-2d", i);
+            for (int j = 1; j <= SIZE; j++) {
+                int x = j - 1;
+                int y = i - 1;
+                if (!hits[y][x]) {
+                    System.out.printf("%2c", CHAR_EMPTY);
+                } else {
+                    System.out.printf("%2c", ships[y][x] ? CHAR_HIT : CHAR_MISS);
+                }
             }
             System.out.println();
         }
@@ -62,5 +83,18 @@ public class Board {
         }
 
         return true;
+    }
+
+    public int shot(int x, int y) {
+        x--;
+        y--;
+
+        if (hits[y][x]) {
+            return SHOT_ALREADY_EXIST;
+        }
+        hits[y][x] = true;
+
+        lastShotMissed = !ships[y][x];
+        return lastShotMissed ? SHOT_MISS : SHOT_HIT;
     }
 }

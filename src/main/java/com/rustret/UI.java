@@ -1,10 +1,7 @@
 package com.rustret;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class UI {
     Map<String, Board> playerBoards = new HashMap<>();
@@ -13,7 +10,22 @@ public class UI {
         startMenu();
         createPlayersMenu();
         playerBoards.keySet().forEach(this::locateShipsMenu);
-        String first = timerMenu();
+
+        String attacker = timerMenu();
+        while (true) {
+            String att = attacker;
+            String victim = playerBoards.keySet().stream().filter(p -> !p.equals(att)).findAny().orElse(null);
+            Board board = playerBoards.get(victim);
+
+            if (board.locatedShips == 0) {
+                break;
+            }
+
+            shotMenu(attacker, board);
+            if (board.lastShotMissed) {
+                attacker = victim;
+            }
+        }
     }
 
     void startMenu() {
@@ -79,16 +91,14 @@ public class UI {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.next();
 
+        clearScreen();
         if (!input.matches("^[республікаРЕСПУБЛІКА]([1-9]|10)[+-]?$")
                 && !input.matches("^([1-9]|10)[республікаРЕСПУБЛІКА][+-]?$")) {
-            clearScreen();
             locateShipsMenu(player, "Неправильний формат координат");
         } else if (!board.insertShip(getX(input), getY(input), size, isVertical(input))) {
-            clearScreen();
             locateShipsMenu(player, "Ви намагаєтеся розмістити корабель занадто близько до інших кораблів або корабель виходить за\n" +
                     "           рамки ігрового поля, спробуйте інші координати");
         } else {
-            clearScreen();
             locateShipsMenu(player);
         }
     }
@@ -111,6 +121,53 @@ public class UI {
         }
 
         return whoIsFirst;
+    }
+
+    void shotMenu(String attacker, Board board) {
+        shotMenu(attacker, board, null);
+    }
+
+    void shotMenu(String attacker, Board board, String message) {
+        drawTitle();
+
+        if (message != null) {
+            System.out.println(message + "\n");
+        }
+
+        System.out.println("Хід гравця " + bold(attacker));
+        board.drawForEnemy();
+
+        System.out.println(
+                "* Примітка: Координати мають містити відповідну букву з горизонтальної осі РЕСПУБЛІКА та число від 1 до 10\n" +
+                        "            не важливо в якому порядку. Наприклад: р1, Е2, 10А, 5с");
+        System.out.print("Введіть координати для пострілу: ");
+
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.next();
+
+        if (!input.matches("^[республікаРЕСПУБЛІКА]([1-9]|10)$")
+                && !input.matches("^([1-9]|10)[республікаРЕСПУБЛІКА]$")) {
+            clearScreen();
+            shotMenu(attacker, board, "* ПОМИЛКА: Неправильний формат координат");
+            return;
+        }
+
+        int result = board.shot(getX(input), getY(input));
+        clearScreen();
+        switch (result) {
+            case Board.SHOT_ALREADY_EXIST -> shotMenu(attacker, board, "* ПОМИЛКА: Ви вже влучали в це місце");
+            case Board.SHOT_HIT -> shotResponseMenu(attacker, "✔ Ви " + bold("влучили") + " в корабель, наступний хід знову за вами");
+            case Board.SHOT_MISS -> shotResponseMenu(attacker, "✘ Ви " + bold("не влучили") + " в корабель, хід переходить до суперника");
+        }
+    }
+
+    void shotResponseMenu(String player, String message) {
+        drawTitle();
+        System.out.println("Результат пострілу гравця " + bold(player));
+        System.out.println(message);
+        System.out.print("\nНатисніть ENTER щоб продовжити...");
+        waitEnter();
+        clearScreen();
     }
 
     int getY(String input) {
