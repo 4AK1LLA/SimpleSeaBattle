@@ -146,26 +146,24 @@ public class Board {
                 break;
             }
 
-            if (vertical) {
-                for (int i = x - 1; i <= x + 1; i++) {
-                    if (i >= 0 && i <= hits.length - 1) {
-                        hits[temp3][i] = true;
-                    }
+            for (int i = vertical ? x - 1 : y - 1; i <= (vertical ? x + 1 : y + 1); i++) {
+                if (i < 0 || i > hits.length - 1) {
+                    continue;
                 }
+                if (vertical) {
+                    hits[temp3][i] = true;
+                } else {
+                    hits[i][temp3] = true;
+                }
+            }
 
-                if (!ships[temp3][x] && (temp3 != min - 1)) {
-                    break;
-                }
-            } else {
-                for (int i = y - 1; i <= y + 1; i++) {
-                    if (i >= 0 && i <= hits.length - 1) {
-                        hits[i][temp3] = true;
-                    }
-                }
+            if (temp3 == min - 1 || temp3 == min) {
+                temp3++;
+                continue;
+            }
 
-                if (!ships[y][temp3]) {
-                    break;
-                }
+            if ((vertical && !ships[temp3][x]) || (!vertical && !ships[y][temp3])) {
+                break;
             }
 
             temp3++;
