@@ -157,6 +157,7 @@ public class UI {
         switch (result) {
             case Board.SHOT_ALREADY_EXIST -> shotMenu(attacker, board, "* ПОМИЛКА: Ви вже влучали в це місце");
             case Board.SHOT_HIT -> shotResponseMenu(attacker, "✔ Ви " + bold("влучили") + " в корабель, наступний хід знову за вами");
+            case Board.SHOT_SHIP_DESTROYED -> shotResponseMenu(attacker, "✔ Ви " + bold("потопили") + " ворожий корабель, наступний хід знову за вами");
             case Board.SHOT_MISS -> shotResponseMenu(attacker, "✘ Ви " + bold("не влучили") + " в корабель, хід переходить до суперника");
         }
     }

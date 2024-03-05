@@ -6,9 +6,10 @@ public class Board {
     public static final int SHOT_ALREADY_EXIST = 0;
     public static final int SHOT_HIT = 1;
     public static final int SHOT_MISS = 2;
+    public static final int SHOT_SHIP_DESTROYED = 3;
     private static final char CHAR_EMPTY = '·';
-    private static final char CHAR_MISS = 'o';
-    private static final char CHAR_HIT = '*';
+    private static final char CHAR_MISS = '×';
+    private static final char CHAR_HIT = '☒';
     private static final char CHAR_SHIP = '□';
     public boolean[][] ships = new boolean[SIZE][SIZE];
     public boolean[][] hits = new boolean[SIZE][SIZE];
@@ -95,6 +96,42 @@ public class Board {
         hits[y][x] = true;
 
         lastShotMissed = !ships[y][x];
-        return lastShotMissed ? SHOT_MISS : SHOT_HIT;
+
+        if (lastShotMissed) {
+            return SHOT_MISS;
+        }
+
+        // Checking if hit destroyed the whole ship
+
+        boolean vertical = ((y + 1 <= ships.length - 1) && ships[y + 1][x]) || ((y - 1 >= 0) && ships[y - 1][x]);
+
+        int min = vertical ? y : x;
+        while (true) {
+            int temp = min - 1;
+            if (temp < 0) {
+                break;
+            }
+            if (vertical ? ships[temp][x] : ships[y][temp]) {
+                min = temp;
+            } else {
+                break;
+            }
+        }
+
+        boolean shipIsDestroyed = false;
+        while (true) {
+            if ((min <= ships.length - 1) && (vertical ? ships[min][x] : ships[y][min])) {
+                if (vertical ? hits[min][x] : hits[y][min]) {
+                    min++;
+                } else {
+                    break;
+                }
+            } else {
+                shipIsDestroyed = true;
+                break;
+            }
+        }
+
+        return shipIsDestroyed ? SHOT_SHIP_DESTROYED : SHOT_HIT;
     }
 }
