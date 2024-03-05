@@ -9,7 +9,6 @@ public class Board {
     public static final int SHOT_SHIP_DESTROYED = 3;
     private static final char CHAR_EMPTY = '·';
     private static final char CHAR_MISS = '×';
-    private static final char CHAR_HIT = '☒';
     private static final char CHAR_SHIP = '□';
     public boolean[][] ships = new boolean[SIZE][SIZE];
     public boolean[][] hits = new boolean[SIZE][SIZE];
@@ -37,7 +36,7 @@ public class Board {
                 if (!hits[y][x]) {
                     System.out.printf("%2c", CHAR_EMPTY);
                 } else {
-                    System.out.printf("%2c", ships[y][x] ? CHAR_HIT : CHAR_MISS);
+                    System.out.printf("%2c", ships[y][x] ? CHAR_SHIP : CHAR_MISS);
                 }
             }
             System.out.println();
@@ -101,6 +100,8 @@ public class Board {
             return SHOT_MISS;
         }
 
+        locatedShips--;
+
         // Checking if hit destroyed the whole ship
 
         boolean vertical = ((y + 1 <= ships.length - 1) && ships[y + 1][x]) || ((y - 1 >= 0) && ships[y - 1][x]);
@@ -118,11 +119,12 @@ public class Board {
             }
         }
 
+        int temp2 = min;
         boolean shipIsDestroyed = false;
         while (true) {
-            if ((min <= ships.length - 1) && (vertical ? ships[min][x] : ships[y][min])) {
-                if (vertical ? hits[min][x] : hits[y][min]) {
-                    min++;
+            if ((temp2 <= ships.length - 1) && (vertical ? ships[temp2][x] : ships[y][temp2])) {
+                if (vertical ? hits[temp2][x] : hits[y][temp2]) {
+                    temp2++;
                 } else {
                     break;
                 }
@@ -132,6 +134,43 @@ public class Board {
             }
         }
 
-        return shipIsDestroyed ? SHOT_SHIP_DESTROYED : SHOT_HIT;
+        if (!shipIsDestroyed) {
+            return SHOT_HIT;
+        }
+
+        // Adding misses around destroyed ship
+
+        int temp3 = min - 1 >= 0 ? min - 1 : min;
+        while (true) {
+            if (temp3 > ships.length - 1) {
+                break;
+            }
+
+            if (vertical) {
+                for (int i = x - 1; i <= x + 1; i++) {
+                    if (i >= 0 && i <= hits.length - 1) {
+                        hits[temp3][i] = true;
+                    }
+                }
+
+                if (!ships[temp3][x] && (temp3 != min - 1)) {
+                    break;
+                }
+            } else {
+                for (int i = y - 1; i <= y + 1; i++) {
+                    if (i >= 0 && i <= hits.length - 1) {
+                        hits[i][temp3] = true;
+                    }
+                }
+
+                if (!ships[y][temp3]) {
+                    break;
+                }
+            }
+
+            temp3++;
+        }
+
+        return SHOT_SHIP_DESTROYED;
     }
 }
