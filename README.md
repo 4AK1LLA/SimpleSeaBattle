@@ -1,4 +1,4 @@
 # Gallery
-<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/b6450e2e-39bb-4815-baf6-0e504947351a" width="500">
-<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/6c394e3a-6c73-4a4f-8259-943bf49f1bc5" width="500">
-<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/7d82e31d-586f-4095-b588-ce4b67bf2eee" width="500">
+<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/f6e24593-9ff0-4c0c-8c45-cf80591f474f" width="600">
+<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/7d4d4f4b-7d4d-4aa1-b288-cd28b447276f" width="600">
+<img src="https://github.com/4AK1LLA/SimpleSeaBattle/assets/90700933/108bdc0a-5983-45b8-85fc-74a81c266d04" width="600">
