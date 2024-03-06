@@ -12,10 +12,13 @@ public class UI {
         playerBoards.keySet().forEach(this::locateShipsMenu);
 
         String attacker = timerMenu();
+        String victim;
+        Board board;
         while (true) {
+            // Better to execute this when attacker is changed
             String att = attacker;
-            String victim = playerBoards.keySet().stream().filter(p -> !p.equals(att)).findAny().orElse(null);
-            Board board = playerBoards.get(victim);
+            victim = playerBoards.keySet().stream().filter(p -> !p.equals(att)).findAny().orElse(null);
+            board = playerBoards.get(victim);
 
             if (board.locatedShips == 0) {
                 break;
@@ -26,6 +29,8 @@ public class UI {
                 attacker = victim;
             }
         }
+
+        winMenu(attacker, board);
     }
 
     void startMenu() {
@@ -159,6 +164,7 @@ public class UI {
             case Board.SHOT_HIT -> shotResponseMenu(attacker, "✔ Ви " + bold("влучили") + " в корабель, наступний хід знову за вами");
             case Board.SHOT_SHIP_DESTROYED -> shotResponseMenu(attacker, "✔ Ви " + bold("потопили") + " ворожий корабель, наступний хід знову за вами");
             case Board.SHOT_MISS -> shotResponseMenu(attacker, "✘ Ви " + bold("не влучили") + " в корабель, хід переходить до суперника");
+            case Board.SHOT_WIN -> {}
         }
     }
 
@@ -169,6 +175,15 @@ public class UI {
         System.out.print("\nНатисніть ENTER щоб продовжити...");
         waitEnter();
         clearScreen();
+    }
+
+    void winMenu(String winner, Board board) {
+        drawTitle();
+        System.out.println("★ Переможець - " + bold(winner));
+        board.drawForEnemy();
+        System.out.println("Для завершення натисніть ENTER...");
+        waitEnter();
+        System.exit(0);
     }
 
     int getY(String input) {
@@ -219,6 +234,6 @@ public class UI {
     }
 
     void drawTitle() {
-        System.out.println("=== Гра «Морський бій» ===\n");
+        System.out.println("-ˏˋ Гра " + bold("«Морський бій»") + " by Ruslan Tretiakov ˊˎ-\n");
     }
 }

@@ -7,6 +7,7 @@ public class Board {
     public static final int SHOT_HIT = 1;
     public static final int SHOT_MISS = 2;
     public static final int SHOT_SHIP_DESTROYED = 3;
+    public static final int SHOT_WIN = 4;
     private static final char CHAR_EMPTY = '·';
     private static final char CHAR_MISS = '×';
     private static final char CHAR_SHIP = '□';
@@ -169,6 +170,6 @@ public class Board {
             temp3++;
         }
 
-        return SHOT_SHIP_DESTROYED;
+        return locatedShips != 0 ? SHOT_SHIP_DESTROYED : SHOT_WIN;
     }
 }
